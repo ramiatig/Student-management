@@ -24,5 +24,5 @@ pipeline {
                 bat 'echo "📊 Rapport de tests généré: target/surefire-reports/"'
             }
         }
-               
+    }
 }
