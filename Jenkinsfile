@@ -1,6 +1,6 @@
 pipeline {
     agent any
-
+    
     stages {
 
         stage('Checkout Git') {
@@ -13,16 +13,14 @@ pipeline {
         stage('Build Maven') {
             steps {
                 echo '🔨 PHASE 2: BUILD - Compilation du projet Spring Boot'
-                bat 'mvn clean install -DskipTests'
-                echo "📦 JAR généré : target/student-management-0.0.1-SNAPSHOT.jar"
+                sh 'mvn clean install -DskipTests'
             }
         }
 
         stage('Tests Unitaires') {
             steps {
                 echo '🧪 PHASE 3: TEST - Exécution des tests automatisés'
-                bat 'mvn test'
-                echo "📊 Rapport tests : target/surefire-reports/"
+                sh 'mvn test'
             }
         }
 
