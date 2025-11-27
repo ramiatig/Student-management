@@ -1,88 +1,52 @@
 pipeline {
     agent any
 
-    tools {
+   tools {
         maven 'Maven-3.9.11'
         jdk 'JDK17'
     }
-
     stages {
-
         stage('Checkout') {
             steps {
-                checkout scm
+                git branch: 'main', url: 'https://github.com/tramiatig/student-management.git'
             }
         }
 
         stage('Build') {
             steps {
-                sh "mvn clean package -DskipTests"
+                // Nettoie l'ancien build et compile le projet
+                bat 'mvn clean install'
             }
         }
 
         stage('Test') {
             steps {
-                sh "mvn test"
+                // Exécute les tests unitaires
+                bat 'mvn test'
             }
         }
 
-        stage('Archive artifacts') {
+        stage('Package') {
             steps {
-                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+                // Génère le package (jar/war)
+                bat 'mvn package'
+            }
+        }
+
+        stage('Archive Artifacts') {
+            steps {
+                // Archive le jar/war généré pour Jenkins
+                archiveArtifacts artifacts: 'target\\*.jar', fingerprint: true
             }
         }
     }
 
     post {
         success {
-            echo "Build terminé avec succès 🎉"
+            echo 'Build terminé avec succès ! 🎉'
         }
         failure {
-            echo "Build échoué ❌"
-        }
-    }
-}
-pipeline {
-    agent any
-
-    tools {
-        maven 'Maven-3.9'       // Nom de Maven dans Jenkins (Manage Jenkins > Tools)
-        jdk 'JDK17'             // Nom du JDK configuré dans Jenkins
-    }
-
-    stages {
-
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-
-        stage('Build') {
-            steps {
-                sh "mvn clean package -DskipTests"
-            }
-        }
-
-        stage('Test') {
-            steps {
-                sh "mvn test"
-            }
-        }
-
-        stage('Archive artifacts') {
-            steps {
-                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
-            }
-        }
-    }
-
-    post {
-        success {
-            echo "Build terminé avec succès 🎉"
-        }
-        failure {
-            echo "Build échoué ❌"
+            echo 'Le build a échoué. ❌'
         }
     }
 }
