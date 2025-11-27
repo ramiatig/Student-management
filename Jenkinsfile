@@ -1,35 +1,44 @@
 pipeline {
     agent any
 
+    tools {
+        maven 'Maven-3.9'       // Nom de Maven dans Jenkins (Manage Jenkins > Tools)
+        jdk 'JDK17'             // Nom du JDK configuré dans Jenkins
+    }
+
     stages {
-        stage('Checkout Git') {
+
+        stage('Checkout') {
             steps {
-                echo '🎯 PHASE 1: CHECKOUT - Récupération du code source'
                 checkout scm
             }
         }
 
-        stage('Build Maven') {
+        stage('Build') {
             steps {
-                echo '🔨 PHASE 2: BUILD - Compilation du projet Spring Boot'
-                bat 'mvn clean install -DskipTests'
+                sh "mvn clean package -DskipTests"
             }
         }
 
-        stage('Tests Unitaires') {
+        stage('Test') {
             steps {
-                echo '🧪 PHASE 3: TEST - Exécution des tests unitaires'
-                bat 'mvn test'
+                sh "mvn test"
+            }
+        }
+
+        stage('Archive artifacts') {
+            steps {
+                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
             }
         }
     }
 
     post {
         success {
-            echo '🎉 Pipeline terminé avec succès !'
+            echo "Build terminé avec succès 🎉"
         }
         failure {
-            echo '❌ Pipeline échoué. Vérifie les erreurs ci-dessus.'
+            echo "Build échoué ❌"
         }
     }
 }
