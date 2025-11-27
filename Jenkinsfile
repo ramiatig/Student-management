@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/tramiatig/student-management.git'
+                git branch: 'main', url: 'https://github.com/ramiatig/Student-management.git'
             }
         }
 
