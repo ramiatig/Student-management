@@ -1,37 +1,40 @@
-    pipeline {
+pipeline {
     agent any
 
-   
+    tools {
+        maven "Maven-3.9.11"  
+    }
 
     stages {
+
         stage('Checkout') {
             steps {
-                echo 'Checkout depuis Git...'
+                echo " Récupération du code..."
                 git branch: 'main', url: 'https://github.com/ramiatig/Student-management.git'
             }
         }
 
         stage('Build & Test') {
             steps {
-                echo ' Build et tests avec Maven...'
-                sh "${MVN_HOME}/bin/mvn clean test"
+                echo "Build + Tests Maven..."
+                bat "mvn clean test"
             }
         }
 
         stage('Package .jar') {
             steps {
-                echo ' Création du .jar...'
-                sh "${MVN_HOME}/bin/mvn clean package"
+                echo " Packaging du .jar..."
+                bat "mvn package -DskipTests"
             }
         }
     }
 
     post {
         success {
-            echo ' Pipeline terminé avec succès !'
+            echo " Pipeline réussie !"
         }
         failure {
-            echo ' La pipeline a échoué.'
+            echo " La pipeline a échoué."
         }
     }
 }
