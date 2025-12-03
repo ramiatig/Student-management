@@ -1,43 +1,37 @@
-pipeline {
+    pipeline {
     agent any
-    
+
+   
+
     stages {
         stage('Checkout') {
             steps {
-                echo '🎉 Étape 1: Préparation de l environnement'
-                sh 'echo "Bonjour Jenkins!"'
+                echo 'Checkout depuis Git...'
+                git branch: 'main', url: 'https://github.com/ramiatig/Student-management.git'
             }
         }
-        
-        stage('Build') {
+
+        stage('Build & Test') {
             steps {
-                echo '🔨 Étape 2: Construction'
-                sh '''
-                    echo "Construction en cours..."
-                    ls -la
-                    pwd
-                '''
+                echo ' Build et tests avec Maven...'
+                sh "${MVN_HOME}/bin/mvn clean test"
             }
         }
-        
-        stage('Test') {
+
+        stage('Package .jar') {
             steps {
-                echo '🧪 Étape 3: Tests'
-                sh 'echo "Exécution des tests..."'
-            }
-        }
-        
-        stage('Deploy') {
-            steps {
-                echo '🚀 Étape 4: Déploiement'
-                sh 'echo "Déploiement réussi!"'
+                echo ' Création du .jar...'
+                sh "${MVN_HOME}/bin/mvn clean package"
             }
         }
     }
-    
+
     post {
-        always {
-            echo '✅ Pipeline terminé!'
+        success {
+            echo ' Pipeline terminé avec succès !'
+        }
+        failure {
+            echo ' La pipeline a échoué.'
         }
     }
 }
