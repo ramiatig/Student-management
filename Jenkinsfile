@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        maven 'MAVEN_3'
+        maven 'Maven-3.9.11'
         jdk 'JDK17'
     }
 
@@ -10,7 +10,7 @@ pipeline {
 
         stage('1️⃣ Clone Repository') {
             steps {
-                echo '📥 Clonage du repository Git...'
+                echo ' Clonage du repository Git...'
                 git branch: 'main', url: 'https://github.com/mohamed15032003/student-management.git'
                 echo ' Clonage terminé'
             }
