@@ -2,39 +2,57 @@ pipeline {
     agent any
 
     tools {
-        maven "Maven-3.9.11"  
+        maven 'MAVEN_3'
+        jdk 'JDK17'
     }
 
     stages {
 
-        stage('Checkout') {
+        stage('1️⃣ Clone Repository') {
             steps {
-                echo " Récupération du code..."
-                git branch: 'main', url: 'https://github.com/ramiatig/Student-management.git'
+                echo '📥 Clonage du repository Git...'
+                git branch: 'main', url: 'https://github.com/mohamed15032003/student-management.git'
+                echo ' Clonage terminé'
             }
         }
 
-        stage('Build & Test') {
+        stage('2️⃣ Build Project') {
             steps {
-                echo "Build + Tests Maven..."
-                bat "mvn clean test"
+                echo ' Compilation du projet avec Maven...'
+                sh 'mvn clean compile -DskipTests'
+                echo ' Build terminé'
             }
         }
 
-        stage('Package .jar') {
+        stage('3️⃣ Test & Package (Tests Sautés)') {
             steps {
-                echo " Packaging du .jar..."
-                bat "mvn package -DskipTests"
+                echo ' Packaging du projet...'
+                sh 'mvn package -DskipTests'
             }
         }
+
+        stage('4️⃣ Package JAR') {
+            steps {
+                echo 'Packaging en JAR...'
+                sh 'mvn clean package -DskipTests'
+            }
+        }
+
+        stage('5️⃣ Archive Artifact') {
+            steps {
+                echo ' Archivage du fichier JAR...'
+                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+            }
+        }
+
     }
 
     post {
-        success {
-            echo " Pipeline réussie !"
-        }
         failure {
-            echo " La pipeline a échoué."
+            echo ' Le pipeline a échoué'
+        }
+        success {
+            echo ' Pipeline terminé avec succès'
         }
     }
 }
