@@ -3,12 +3,11 @@ pipeline {
 
     tools {
         maven 'Maven-3.9.11'
-'
         jdk 'JDK17'
     }
 
     environment {
-        SONAR_TOKEN = credentials('SONARQUBE_TOKEN')  // ✅ استعمال credential
+        SONAR_TOKEN = credentials('SONARQUBE_TOKEN')  // ✅ Utilisation du credential
     }
 
     stages {
