@@ -26,27 +26,35 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
-            steps {
-                sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
-            }
-        }
+       stage('Build Docker Image') {
+    steps {
+        echo '🐳 Build image Docker student-management2'
+        sh '''
+        docker build -t student-management2:1.0 .
+        '''
+    }
+}
 
-        stage('Push Docker Image') {
-            steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'dockerhub-credentials',
-                    usernameVariable: 'DOCKERHUB_USER',
-                    passwordVariable: 'DOCKERHUB_PASS'
-                )]) {
-                    sh """
-                    echo \$DOCKERHUB_PASS | docker login -u \$DOCKERHUB_USER --password-stdin
-                    docker tag ${IMAGE_NAME}:${IMAGE_TAG} \$DOCKERHUB_USER/${IMAGE_NAME}:${IMAGE_TAG}
-                    docker push \$DOCKERHUB_USER/${IMAGE_NAME}:${IMAGE_TAG}
-                    """
-                }
+
+       stage('Push Docker Image') {
+    steps {
+        script {
+            withCredentials([usernamePassword(
+                credentialsId: 'dockerhub-credentials',
+                usernameVariable: 'DOCKERHUB_USER',
+                passwordVariable: 'DOCKERHUB_PASS'
+            )]) {
+
+                sh "echo $DOCKERHUB_PASS | docker login -u $DOCKERHUB_USER --password-stdin"
+
+                sh "docker tag student-management2:1.0 $DOCKERHUB_USER/student-management2:1.0"
+
+                sh "docker push $DOCKERHUB_USER/student-management2:1.0"
             }
         }
+    }
+}
+
     }
 
     post {
